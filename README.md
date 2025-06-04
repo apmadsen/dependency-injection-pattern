@@ -52,3 +52,7 @@ app = provider.provide(Application)
 
 value = app.get_value() # => "Service2 returned: Service1 returned: Some value"
 ```
+
+## API
+
+[Go to API documentation](https://github.com/apmadsen/pyproject.toml/blob/main/docs/api.md)
