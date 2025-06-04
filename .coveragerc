@@ -1,0 +1,20 @@
+[report]
+ignore_errors = True
+fail_under = 100
+exclude_also =
+    pragma: no cover
+    @overload
+    @abstract
+    from
+    import
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+
+
+# [run]
+# source = src
+# branch = True
