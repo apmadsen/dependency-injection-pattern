@@ -26,16 +26,16 @@ def resolve(
         except:
             pass
 
-    for frame in stack()[1:]:
+    # fallback
+    for frame in stack()[1:]: # pragma: no cover
         if frame.filename == __file__:
-            continue # pragma: no cover
+            continue
 
         globals = { **frame.frame.f_globals , **frame.frame.f_builtins}
         locals = frame.frame.f_locals
 
         try:
-            result = eval(annotation, globals, locals)
-            return result
+            return eval(annotation, globals, locals)
         except:
             pass
 

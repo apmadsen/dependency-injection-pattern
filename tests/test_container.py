@@ -21,6 +21,9 @@ def test_dependencies():
         container.add_transient(DependentServiceFail1)
 
     with assert_raises(AddException):
+        container.add_transient(Service)
+
+    with assert_raises(AddException):
         container.add_transient("test") # pyright: ignore[reportCallIssue, reportArgumentType]
 
     with assert_raises(AddException):
