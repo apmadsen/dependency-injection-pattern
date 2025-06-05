@@ -2,7 +2,7 @@
 name = "dependency-injection-pattern"
 dynamic = ["version"]
 description = "Python implementation of the Dependency Injection pattern."
-keywords = ["windows", "linux", "dependency injection", "di", "dependency", "injection"]
+keywords = ["windows", "linux", "dependency injection", "di", "dependency", "injection", "IoC"]
 readme = "README.md"
 authors = [
     { name = "Anders Madsen", email = "anders.madsen@alphavue.com" }
@@ -32,7 +32,7 @@ dependencies = [
 requires-python = ">=3.10"
 
 [project.urls]
-repository = "https://github.com/apmadsen/ependency-injection-pattern"
+repository = "https://github.com/apmadsen/dependency-injection-pattern"
 
 [project.optional-dependencies]
 test = [
