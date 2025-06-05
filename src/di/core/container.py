@@ -188,22 +188,22 @@ class Container:
         if self.__provider is None:
             from di.core.provider import Provider
             self.__provider = Provider(self)
+            self.__add_factory(SingletonFactory, Provider, self.__provider)
 
             factories = { **self.__factories, **{ service: factory for service, factory in self.__named_factories.values() } }
             for service, factory in factories.items():
                 for dep in factory.dependencies.values():
                     if not dep.service in factories:
                         if not dep.is_optional and not dep.has_default:
-                            raise SealException(f"Service '{get_service_name(service)}' depends on service '{get_service_name(dep.service)}' which is not defined in container")
+                            raise SealException(f"Service '{get_service_name(service)}' depends on service '{get_service_name(dep.service)}' which is not defined in container.")
                         else:
-                            LOG.warning(f"Service '{get_service_name(service)}' depends on service '{get_service_name(dep.service)}' which is not defined in container")
+                            LOG.warning(f"Service '{get_service_name(service)}' depends on service '{get_service_name(dep.service)}' which is not defined in container.")
                     elif not dep.is_factory and isinstance(factory, SingletonFactory):
                         if isinstance(factories[dep.service], ScopedFactory):
-                            raise SealException(f"Singleton service '{get_service_name(service)}' depends on scoped service '{get_service_name(dep.service)}' which is not permitted")
+                            raise SealException(f"Singleton service '{get_service_name(service)}' depends on scoped service '{get_service_name(dep.service)}' which is not permitted.")
                         elif isinstance(factories[dep.service], TransientFactory):
-                            raise SealException(f"Singleton service '{get_service_name(service)}' depends on transient service {get_service_name(dep.service)}' which is not permitted")
+                            raise SealException(f"Singleton service '{get_service_name(service)}' depends on transient service {get_service_name(dep.service)}' which is not permitted.")
 
-            self.__add_factory(SingletonFactory, Provider, self.__provider)
         return self.__provider
 
     def __add_factory_pre(self, factory_type: type[Factory[T]], *args: Any) -> tuple[str, type[Any]]:
@@ -221,7 +221,7 @@ class Container:
             implementation = None
         else:
             if not isinstance(args[0], FunctionType):
-                raise AddException("Implementation must be a function or a type when no service is specified")
+                raise AddException("Implementation must be a function or a type when no service is specified.")
             implementation = cast(Callable[..., Any], args[0])
             signature = reflect_function(implementation)
             service, _ = get_optional_type(cast(type, signature.return_type))
@@ -235,7 +235,7 @@ class Container:
             if service in self.__named_factories:
                 raise AddException(f"Service '{get_service_name(service)}' is already defined in provider")
             elif implementation is None:
-                raise AddException(f"Cannot add named service '{get_service_name(service)}' without providing an implementation")
+                raise AddException(f"Cannot add named service '{get_service_name(service)}' without providing an implementation.")
 
             if is_type(implementation):
                 svc_type = cast(type[T], implementation)
@@ -251,7 +251,7 @@ class Container:
 
         else:
             if service in self.__factories:
-                raise AddException(f"Service '{get_service_name(service)}' is already defined in provider")
+                raise AddException(f"Service '{get_service_name(service)}' is already defined in provider.")
             else:
                 factory = factory_type(self, service, implementation)
                 self.__factories[cast(type, service)] = factory

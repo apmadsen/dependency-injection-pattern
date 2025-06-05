@@ -44,6 +44,13 @@ class Provider:
         ...
     @overload
     def provide(self, service: type[T], scope: Scope) -> T:
+        """
+        Provides the specified service.
+
+        Args:
+            service (type[Any]) The service interface.
+            scope (Scope) A custom scope.
+        """
         ...
     def provide(self, service: type[T], scope: Scope | None = None) -> T:
         return self._provide(service, scope)

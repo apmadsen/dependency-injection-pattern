@@ -5,9 +5,22 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dependency-injection-pattern)
 [![PyPI Downloads](https://static.pepy.tech/badge/dependency-injection-pattern/week)](https://pepy.tech/projects/dependency-injection-pattern)
 
-# dependency-injection-pattern: Python implementation of the Dependency Injection pattern.
+# dependency-injection-pattern
+> A Python implementation of the Dependency Injection pattern.
 
-Dependency-injection-pattern extends python with a real dependency injection or Inversion of Control (IoC) implementation, relying on typing to achieve a seamless injection of dependencies.
+This project extends python with a real dependency injection or Inversion of Control (IoC) implementation, relying on typing and inspection to achieve a seamless injection of dependencies.
+
+Though not normally associated with Python applications, dependency injection can greatly reduce time spent during development and testing. Usually, in a longrunning Python application or service, you would put the container registration inside the `__main_.py` file and similar code in test files, where service implementations can easily be substituted.
+
+## How it works
+When a service is requested, the provider looks it up in the factory dictionary, which then gets or creates a fitting instance. Any parameters needed for instantiation is supplied (injected) by the provider.
+
+A service implementation may be inferred by a service in which case the service constructor is used, and correspondingly a service may be inferred by the return type of an implementation function.
+
+## Conventions
+- All dependencies are resolved when container is sealed, which implements a fail-fast pattern. Only exceptions are optional dependencies or dependencies with a default value.
+
+- Singleton services may not depend on scoped or transient services, as this would negate the "transient" or "scoped" part since a singleton service would keep a reference to it's dependencies indefinitely.
 
 ## Example:
 

@@ -149,3 +149,30 @@ def test_example_6():
 
     value = values[0] # => "Some value"
     assert values[0] == "Some value"
+
+def test_example_7():
+    from di import Container, Provider
+    from tests.classes import Service1, Service2
+
+    class Application:
+        def __init__(self, provider: Provider):
+            self.services = (
+                provider.provide(service)
+                for service in [
+                    Service1,
+                    Service2
+                ]
+            )
+
+    container = Container()
+    container.add_transient(Application)
+    container.add_transient(Service1)
+    container.add_transient(Service2)
+
+    provider = container.provider()
+
+    app = provider.provide(Application)
+    service1, service2 = app.services # => Service1, Service2
+
+    assert isinstance(service1, Service1)
+    assert isinstance(service2, Service2)
