@@ -5,7 +5,7 @@ from di.core.reflection import ParameterKind, Undefined, get_constructor, reflec
 
 
 from tests.reflection.explore import explore
-from tests.reflection.reflection_classes import Class4, Test1, TestClass
+from tests.reflection.reflection_classes import Class4, Class6, Class5
 
 def test_get_constructor():
     signature1 = get_constructor(dict)
@@ -31,7 +31,7 @@ def test_get_constructor():
     signature21 = reflect_function(Class4().__init__)
     assert signature2 == signature21
 
-    signature3 = get_constructor(Test1)
+    signature3 = get_constructor(Class6)
     e3 = explore(signature3)
     assert e3 ==  (
         Undefined,
@@ -41,14 +41,14 @@ def test_get_constructor():
         ]
     )
 
-    signature31 = reflect_function(Test1().__init__)
+    signature31 = reflect_function(Class6().__init__)
     assert signature3 == signature31
 
-    signature4 = get_constructor(TestClass)
+    signature4 = get_constructor(Class5)
     e4 = explore(signature4)
     assert e4 ==  (
         Undefined, []
     )
 
-    signature41 = reflect_function(TestClass().__init__)
+    signature41 = reflect_function(Class5().__init__)
     assert signature4 == signature41

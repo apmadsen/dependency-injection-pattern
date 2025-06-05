@@ -1,4 +1,5 @@
-[API](/docs/api.md) > Provider class
+[API](/docs/api.md) > [di](/docs/api/di/di.md) > Provider class
+
 # `Provider` class
 
 The `Provider` class is created by the container when sealing it, and is the class that provides the services registered on that container.

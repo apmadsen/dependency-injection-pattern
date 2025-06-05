@@ -12,11 +12,11 @@ from di.core.factories.transient_factory import TransientFactory
 from di.core.factories.scoped_factory import ScopedFactory
 from di.core.default_scope import DefaultScope
 from di.core.named_service import NamedService
-from di.core.helpers import clean_service_name, get_service_name, is_context, get_provided_service_from_annotation
+from di.core.helpers import clean_service_name, get_service_name, is_context
 from di.core.exceptions.provide_exception import ProvideException
 from di.core.exceptions.add_exception import AddException
-from di.core.exceptions.factory_seal_exception import FactorySealException
-from di.core.exceptions.factory_sealed_error import FactorySealedError
+from di.core.exceptions.seal_exception import SealException
+from di.core.exceptions.container_sealed_error import ContainerSealedError
 
 if TYPE_CHECKING:
     from di.core.provider import Provider
@@ -37,12 +37,10 @@ class Container:
     __slots__ = ["__factories", "__named_factories", "__list_factories", "__default_scope", "__provider"]
 
     def __init__(self):
-        from di.core.provider import Provider
         self.__factories: dict[type[Any], Factory[Any]] = {}
         self.__named_factories: dict[str, tuple[type[Any], Factory[Any]]] = {}
         self.__provider: Provider | None = None
         self.__default_scope = DefaultScope()
-        self.__add_factory(SingletonFactory, Provider, self.provider)
 
     @property
     def default_scope(self) -> Scope:
@@ -191,25 +189,26 @@ class Container:
             from di.core.provider import Provider
             self.__provider = Provider(self)
 
-            factories ={ **self.__factories, **{ service: factory for service ,factory in self.__named_factories.values() } }
+            factories = { **self.__factories, **{ service: factory for service, factory in self.__named_factories.values() } }
             for service, factory in factories.items():
-                for dep in factory.dependencies:
-                    svc_type, is_optional = get_optional_type(dep)
-                    dep, is_factory = get_provided_service_from_annotation(svc_type)
-                    if not dep in factories:
-                        if not is_optional:
-                            LOG.warning(f"Singleton service '{get_service_name(service)} depends on service '{get_service_name(dep)}' which is not defined in container")
-                    elif not is_factory and isinstance(factory, SingletonFactory) and isinstance(factories[dep], ScopedFactory):
-                        raise FactorySealException(f"Singleton service '{get_service_name(service)} depends on scoped service '{get_service_name(dep)}' which is not permitted")
-                    elif not is_factory and isinstance(factory, SingletonFactory) and isinstance(factories[dep], TransientFactory):
-                        raise FactorySealException(f"Singleton service '{get_service_name(service)}' depends on transient service {get_service_name(dep)}' which is not permitted")
+                for dep in factory.dependencies.values():
+                    if not dep.service in factories:
+                        if not dep.is_optional and not dep.has_default:
+                            raise SealException(f"Service '{get_service_name(service)}' depends on service '{get_service_name(dep.service)}' which is not defined in container")
+                        else:
+                            LOG.warning(f"Service '{get_service_name(service)}' depends on service '{get_service_name(dep.service)}' which is not defined in container")
+                    elif not dep.is_factory and isinstance(factory, SingletonFactory):
+                        if isinstance(factories[dep.service], ScopedFactory):
+                            raise SealException(f"Singleton service '{get_service_name(service)}' depends on scoped service '{get_service_name(dep.service)}' which is not permitted")
+                        elif isinstance(factories[dep.service], TransientFactory):
+                            raise SealException(f"Singleton service '{get_service_name(service)}' depends on transient service {get_service_name(dep.service)}' which is not permitted")
 
-
+            self.__add_factory(SingletonFactory, Provider, self.__provider)
         return self.__provider
 
     def __add_factory_pre(self, factory_type: type[Factory[T]], *args: Any) -> tuple[str, type[Any]]:
         if self.__provider != None:
-            raise FactorySealedError
+            raise ContainerSealedError
 
         if len(args) == 2:
             if not is_type(args[0]) and not isinstance_typing(args[0], str):

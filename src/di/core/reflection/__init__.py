@@ -1,7 +1,8 @@
 from typing import Any, cast
 from typingutils import AnyFunction
-from types import MethodType
-from inspect import Parameter as InspectParameter, signature as get_signature, stack, unwrap
+from types import FrameType, MethodType
+from sys import modules
+from inspect import Parameter as InspectParameter, FrameInfo, signature as get_signature, stack, unwrap
 
 from di.core.reflection.undefined import Undefined
 from di.core.reflection.signature import Signature
@@ -41,14 +42,40 @@ def resolve(
     raise Exception(f"Unable to resolve {annotation}") # pragma: no cover
 
 
-def reflect_function(fn: AnyFunction) -> Signature:
+
+
+def get_frame(fn: Any, stack: list[FrameInfo], cls: Any | None) -> FrameType | None: # pragma: no cover
+    module = None
+
+    if hasattr(fn, "__module__"):
+        module = modules[getattr(fn, "__module__")]
+    elif cls and hasattr(cls, "__module__"):
+        module = modules[getattr(cls, "__module__")]
+
+    if module and hasattr(module, "__file__"):
+        for frame in stack:
+            if frame.filename == module.__file__:
+                frame_locals = frame.frame.f_locals.values()
+                if cls is not None and cls in frame_locals:
+                    return frame.frame
+                elif fn in frame_locals:
+                    return frame.frame
+
+
+def reflect_function(fn: AnyFunction, cls: object | None = None) -> Signature:
     fn = unwrap(fn)
     sig = get_signature(fn)
+
+    if hasattr(fn, "__self__") and ( self := getattr(fn, "__self__") ):
+        cls = self
 
     parameters = list(sig.parameters.values())
     globals: dict[str, Any] | None = getattr(fn, "__globals__") if hasattr(fn, "__globals__") else None
     builtins: dict[str, Any] | None = getattr(fn, "__builtins__") if hasattr(fn, "__builtins__") else None
-    locals: dict[str, Any] | None = getattr(fn, "__locals__") if hasattr(fn, "__locals__") else None
+    locals: dict[str, Any] | None = None
+
+    if frame := get_frame(fn, stack()[1:], cls): # pragma: no cover
+        locals = frame.f_locals
 
     if parameters:
         first_param = parameters[0].name.lower()
@@ -96,4 +123,4 @@ def reflect_function(fn: AnyFunction) -> Signature:
 
 
 def get_constructor(cls: type[Any]) -> Signature:
-    return reflect_function(getattr(cls, "__init__"))
+    return reflect_function(getattr(cls, "__init__"), cls)

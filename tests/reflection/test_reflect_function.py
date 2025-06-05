@@ -8,17 +8,17 @@ from unittest import TestCase, main
 
 T = TypeVar("T")
 
-from di.core.reflection import reflect_function, Undefined, ParameterKind
+from di.core.reflection import reflect_function, get_constructor, Undefined, ParameterKind
 
 from tests.reflection.explore import explore
-from tests.reflection.reflection_classes import Class4, Test1, TestClass
+from tests.reflection.reflection_classes import Class1, Class4, Class6, Class5
 from tests.reflection.reflection_functions import fn_test3, fn_test4, fn_test5, fn_test6, fn_test7
 
 def test_reflect_function():
 
-    test = Test1()
+    test = Class6()
 
-    signature1 = reflect_function(Test1.Test2()._test2)
+    signature1 = reflect_function(Class6.Class7()._test2)
     e1 = explore(signature1)
     assert e1 == (
         str,
@@ -27,7 +27,7 @@ def test_reflect_function():
         ]
     )
 
-    signature2 = reflect_function(Test1.Test2._test2)
+    signature2 = reflect_function(Class6.Class7._test2)
     e2 = explore(signature2)
     assert e2 == (
         str,
@@ -37,7 +37,7 @@ def test_reflect_function():
     )
 
 
-    signature3 = reflect_function(Test1._test1)
+    signature3 = reflect_function(Class6._test1)
     e3 = explore(signature3)
     assert e3 == (
         bool,
@@ -294,9 +294,9 @@ def test_default_values():
 
 
 def test_method_vs_function():
-    test1 = Test1()
+    test1 = Class6()
 
-    f1 = Test1._test1
+    f1 = Class6._test1
     f2 = test1._test1
     r1 = reflect_function(f1)
     r2 = reflect_function(f2)
@@ -304,3 +304,19 @@ def test_method_vs_function():
 
     x = 0
 
+def test_shadowing_class():
+    class Class1: # Class1 shadows Class1 already in global scope
+        ...
+    class Class2:
+        def __init__(self, class1: Class1):
+            ...
+
+
+    signature = get_constructor(Class2)
+    e = explore(signature)
+    assert e == (
+        Undefined,
+        [
+            ("class1", ParameterKind.POSITIONAL_OR_KEYWORD, Class1, Undefined)
+        ]
+    )

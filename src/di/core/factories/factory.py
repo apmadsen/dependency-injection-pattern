@@ -6,10 +6,11 @@ from di.core.scope import Scope
 from di.core.named_service import NamedService
 from di.core.service_request import ServiceRequest
 
-from di.core.exceptions.factory_implement_exceptions import FactoryImplementException
+from di.core.exceptions.implementation_exception import ImplementationException
 from di.core.exceptions.factory_provide_exception import FactoryProvideException
 from di.core.exceptions.provide_exception import ProvideException
 from di.core.protocols.container import Container
+from di.core.factories.dependency import Dependency
 
 T = TypeVar('T')
 
@@ -20,19 +21,19 @@ class Factory(Generic[T]):
         self.__container = container
         self.__service = service
         self.__implementation = service if implementation is None else implementation
-        self.__dependencies: set[type] = set([])
+        self.__dependencies: dict[str, Dependency] = {}
 
         if not implementation:
             if hasattr(service, "__origin__"):
-                sig = reflect_function(getattr(service, "__call__"))
+                sig = reflect_function(getattr(service, "__call__"), service)
             else:
                 sig = get_constructor(service)
         elif isinstance(implementation, type):
             sig = get_constructor(cast(type, implementation))
             if not service is NamedService and not issubclass_typing(implementation, service):
-                raise FactoryImplementException(service, implementation, "Implementation class is not derived from service")
+                raise ImplementationException(service, implementation, "Implementation class is not derived from service")
             elif implementation is service:
-                raise FactoryImplementException(service, implementation, "Implementation equals service")
+                raise ImplementationException(service, implementation, "Implementation equals service")
         elif isinstance_typing(implementation, service, recursive=True):
             sig = None
         elif callable(implementation):
@@ -45,22 +46,22 @@ class Factory(Generic[T]):
             if service is NamedService:
                 pass
             elif not implementation_type:
-                raise FactoryImplementException(service, implementation, "Implementation is missing return annotation")
+                raise ImplementationException(service, implementation, "Implementation is missing return annotation")
             elif not issubclass_typing(implementation_type, service):
-                raise FactoryImplementException(service, implementation, "Implementation does not resolve into a class derived from service")
+                raise ImplementationException(service, implementation, "Implementation does not resolve into a class derived from service")
         elif service is NamedService:
             sig = None
         else:
-            raise FactoryImplementException(service, implementation, "Implementation does not resolve into a class derived from service")
+            raise ImplementationException(service, implementation, "Implementation does not resolve into a class derived from service")
 
         if sig != None:
             parameters = [ p for p in sig.parameters if p.kind == ParameterKind.POSITIONAL_OR_KEYWORD ]
             missing_annotations = [ p.name for p in parameters if not p.parameter_type ]
-            self.__dependencies = set([ cast(type, p.parameter_type) for p in parameters ])
+            self.__dependencies = { p.name: Dependency(p.name, p.parameter_type, p.default) for p in parameters }
 
             if len(missing_annotations) > 0:
                 parameters_missing_ann = ", ".join([f"'{p}'" for p in missing_annotations])
-                raise FactoryImplementException(service, implementation, f"Parameter(s) {parameters_missing_ann} missing annotation")
+                raise ImplementationException(service, implementation, f"Parameter(s) {parameters_missing_ann} missing annotation")
 
             def ctor(scope: Scope | None = None) -> T:
                 provider = container.provider()
@@ -95,7 +96,7 @@ class Factory(Generic[T]):
         return self .__service
 
     @property
-    def dependencies(self) -> set[type]:
+    def dependencies(self) -> dict[str, Dependency]:
         return self.__dependencies
 
     def provide(self, scope: Scope | None = None) -> T:

@@ -1,4 +1,5 @@
-[API](/docs/api.md) > Container class
+[API](/docs/api.md) > [di](/docs/api/di/di.md) > Container class
+
 # `Container` class
 
 The `Container` class is the class where all service registration takes place.

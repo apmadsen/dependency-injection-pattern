@@ -139,7 +139,7 @@ class ClassBaseB:
     class NestedClassB:
         ...
 
-class TestDelegate:
+class WithDelegate:
     def __get__(self, instance: object, cls: type) -> str:
         return "Test"
 
@@ -148,7 +148,7 @@ class ClassDerived(ClassBaseA, ClassBaseB):
     _y: float
     __y: float # pyright: ignore[reportUnusedVariable]
 
-    Dlg = TestDelegate()
+    Dlg = WithDelegate()
 
     @overload
     def __init__(self) -> None:
@@ -186,7 +186,7 @@ class ClassDerived(ClassBaseA, ClassBaseB):
 
 
 
-class TestClass:
+class Class5:
     field1: int
 
     def __init__(self):
@@ -211,12 +211,12 @@ class TestClass:
     def test(self, s: str) -> str:
         return "test"
 
-    class TestSubClass:
+    class SubClass:
         @property
         def prop1(self) -> float:
             return 3.14
 
-class Test1:
+class Class6:
     @property
     def prop1(self) -> int:
         return 1
@@ -241,11 +241,11 @@ class Test1:
     def _test2(self, x: List[str] = [ "test" ]) -> None:
         ...
 
-    class Test2:
+    class Class7:
         def _test2(self, y: float) -> str:
             return "Hey"
 
-class TestAbstract(ABC):
+class AbstractClass(ABC):
 
     @property
     def prop1(self) -> int:

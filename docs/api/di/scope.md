@@ -1,4 +1,5 @@
-[API](/docs/api.md) > Scope class
+[API](/docs/api.md) > [di](/docs/api/di/di.md) > Scope class
+
 # `Scope` class
 
 The `Scope` class is the base class of scopes used for providing services that are registered using the `add_scoped(...)` function.

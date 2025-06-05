@@ -3,25 +3,32 @@ from typing import cast, Sequence, MutableSequence, Generic, TypeVar, Any, Class
 from pytest import raises as assert_raises
 
 from di import Container, Factory, Provider
-from di.exceptions import FactoryImplementException, AddException, FactorySealException, FactoryProvideException, ProvideException
+from di.exceptions import ImplementationException, AddException, SealException, FactoryProvideException, ProvideException
 
 from tests.classes import *
 
 
 def test_dependencies():
-    Service.INST.clear()
+    container = Container()
+    container.add_transient(Service)
+    container.add_singleton(Options1, Options1("test", 35))
+    container.add_transient(DependentService)
+    provider = container.provider()
 
+    with assert_raises(ProvideException):
+        provider.provide(DependentServiceFail2)
+
+    assert isinstance(cast(object, provider.provide(DependentService)), DependentService)
+
+def test_seal_error():
     container = Container()
     container.add_transient(Service)
     container.add_singleton(Options1, Options1("test", 35))
     container.add_transient(DependentService)
     container.add_transient(DependentServiceFail2)
-    provider = container.provider()
 
-    with assert_raises(FactoryProvideException):
-        provider.provide(DependentServiceFail2)
-
-    assert isinstance(cast(object, provider.provide(DependentService)), DependentService)
+    with assert_raises(SealException):
+        provider = container.provider()
 
 def test_collections():
     container = Container()

@@ -3,9 +3,9 @@ from typing import Any
 
 from di.core.helpers import get_service_name
 
-class FactoryImplementException(Exception):
+class ImplementationException(Exception):
     """
-    The FactoryImplementException is raised at initialization time when factory cannot provide service using the
+    The ImplementationException is raised at initialization time when factory cannot provide service using the
     specified implementation. This could be due to implementation not resolving to a class derived from service,
     or that implementaion cannot be resolved at all due to missing type annotations.
     """

@@ -1,13 +1,13 @@
 # pyright: basic
 from __future__ import annotations
-from threading import Thread
 from time import sleep
+from threading import Thread
 from typing import cast, Sequence, MutableSequence, Generic, TypeVar, Any, ClassVar
 from pytest import raises as assert_raises
 
 from di import Container, Factory, Provider
 from di.core.service_request import ServiceRequest
-from di.exceptions import FactoryImplementException, AddException, FactorySealException, FactoryProvideException, ProvideException
+from di.exceptions import ImplementationException, AddException, SealException, FactoryProvideException, ProvideException
 
 from tests.classes import *
 
@@ -32,11 +32,11 @@ def test_factory():
     def impl3() -> Test3:
         return Test3()
 
-    with assert_raises(FactoryImplementException):
+    with assert_raises(ImplementationException):
         container.add_singleton(Service, Service) #impl same as svc
-    with assert_raises(FactoryImplementException):
+    with assert_raises(ImplementationException):
         container.add_singleton(Service, cs) #impl has no return annotation
-    with assert_raises(FactoryImplementException):
+    with assert_raises(ImplementationException):
         container.add_singleton(IService, Service1) #imp not derived from svc
 
     container.add_singleton(Service, cs1)
@@ -55,6 +55,21 @@ def test_factory():
     with assert_raises(AddException):
         container.add_singleton(Service, Service)
 
+
+def test_factory_provide():
+    container = Container()
+
+    container.add_transient(Service)
+    container.add_transient(DependentService)
+    container.add_singleton(Options1, Options1("test", 35))
+
+    provider = container.provider()
+    factory, *_ = container._get_factory(DependentService)
+
+    del cast(dict, getattr(container, "_Container__factories"))[Service] # forcefully remove the factory of Service
+
+    with assert_raises(FactoryProvideException):
+        cast(Factory[DependentService], factory).provide()
 
 def test_named_factory():
     container = Container()
@@ -112,7 +127,7 @@ def test_singleton_factory():
     container.add_transient(Service)
     container.add_singleton(Options1, Options1("test", 35))
     container.add_singleton(DependentService)
-    with assert_raises(FactorySealException):
+    with assert_raises(SealException):
         container.provider()
 
 
@@ -128,8 +143,6 @@ def test_scoped_factory():
             return self
         def __exit__(self, *args: Any, **kwargs: Any):
             self.exited += 1
-
-
 
     Service.INST.clear()
 
@@ -158,7 +171,7 @@ def test_scoped_factory():
     thread2.start()
     thread2.join()
 
-    sleep(0.1) # wait for thread finilazer to run
+    sleep(0.1) # wait for thread finalizer to run
 
     assert len(Service.INST) == 2
     assert len([ inst for inst in CTX.classes if inst.entered != 1 ]) == 0

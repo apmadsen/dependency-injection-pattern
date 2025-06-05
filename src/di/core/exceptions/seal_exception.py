@@ -1,7 +1,7 @@
 # pragma: no cover
-class FactorySealException(Exception):
+class SealException(Exception):
     """
-    The FactorySealException is raised when container is being sealed and a preliminary check reveals that one or more
+    The SealException is raised when container is being sealed and a preliminary check reveals that one or more
     services cannot be provided. This could be due to a singleton service depending on a transient or scoped service which
     isn't allowed..
     """

@@ -1,4 +1,5 @@
-[API](/docs/api.md) > DefaultScope class
+[API](/docs/api.md) > [di](/docs/api/di/di.md) > DefaultScope class
+
 # `DefaultScope` class
 
 The `DefaultScope` class is, as the name implies, the default scope used for providing services that are registered using the `add_scoped(...)` function.
