@@ -66,6 +66,6 @@ app = provider.provide(Application)
 value = app.get_value() # => "Service2 returned: Service1 returned: Some value"
 ```
 
-## API
+## Full documentation
 
-[Go to API documentation](https://github.com/apmadsen/dependency-injection-pattern/blob/main/docs/api.md)
+[Go to documentation](https://github.com/apmadsen/dependency-injection-pattern/blob/main/docs/documentation.md)

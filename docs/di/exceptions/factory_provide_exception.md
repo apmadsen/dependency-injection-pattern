@@ -1,4 +1,4 @@
-[API](/docs/api.md) > [di](/docs/api/di/di.md) > [exceptions](/docs/api/di/exceptions/exceptions.md) > FactoryProvideException class
+[Documentation](/docs/documentation.md) > [di](/docs/di/di.md) > [exceptions](/docs/di/exceptions/exceptions.md) > FactoryProvideException class
 
 ## `FactoryProvideException` exception
 
