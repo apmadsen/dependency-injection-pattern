@@ -1,4 +1,4 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/di.md) > [exceptions](/docs/di/exceptions/exceptions.md) > ImplementationException class
+[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > [exceptions](/docs/di/exceptions/module.md) > ImplementationException class
 
 # `ImplementationException` exception
 

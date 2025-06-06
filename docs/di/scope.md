@@ -1,4 +1,4 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/di.md) > Scope class
+[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > Scope class
 
 # `Scope` class
 

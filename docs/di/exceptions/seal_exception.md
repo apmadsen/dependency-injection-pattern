@@ -1,4 +1,4 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/di.md) > [exceptions](/docs/di/exceptions/exceptions.md) > SealException class
+[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > [exceptions](/docs/di/exceptions/module.md) > SealException class
 
 # `SealException` exception
 

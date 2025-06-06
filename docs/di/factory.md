@@ -1,4 +1,4 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/di.md) > Factory class
+[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > Factory class
 
 # `Factory` class
 

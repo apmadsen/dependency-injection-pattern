@@ -1,4 +1,4 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/di.md) > DefaultScope class
+[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > DefaultScope class
 
 # `DefaultScope` class
 

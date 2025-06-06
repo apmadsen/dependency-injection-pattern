@@ -1,4 +1,4 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/di.md) > Provider class
+[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > Provider class
 
 # `Provider` class
 

@@ -1,4 +1,4 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/di.md) > Container class
+[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > Container class
 
 # `Container` class
 
