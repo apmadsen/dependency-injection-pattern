@@ -2,6 +2,6 @@
 
 # Documentation
 
-## [`di` module](/docs/di/di.md)
-## [`di.exceptions` module](/docs/di/exceptions/exceptions.md)
+### [`di` module](/docs/di/di.md)
+### [`di.exceptions` module](/docs/di/exceptions/exceptions.md)
 

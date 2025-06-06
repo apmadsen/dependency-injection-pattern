@@ -4,7 +4,7 @@
 
 The `Container` class is the class where all service registration takes place.
 
-## Example:
+### Example:
 ```python
 from logging import Logger
 from di import Container
@@ -23,13 +23,18 @@ The class has three main scopes for registering services:
 - `add_transient(...)`: Adds a transient service to the container. When service is requested, a new instance will be returned each time.
 - `add_scoped(...)`: Adds a scoped service to the container. When service is requested within the same scope, the same instance will be returned each time.
 
-Common to all three scopes, are four patterns:
+## Functions
 
-## add_xxx(service: _type[Any]_)
+### add_singleton(service: _type[Any]_)
+The `add_singleton(service: type[Any])` function registers a singleton service based on a type. When resolved, the types constructor dependencies are injected automatically.
 
-The `add_xxx(service: type[Any])` function registers a service based on a type. When resolved, the types constructor dependencies are injected automatically.
+### add_transient(service: _type[Any]_)
+The `add_transient(service: type[Any])` function registers a transient service based on a type. When resolved, the types constructor dependencies are injected automatically.
 
-### Example:
+### add_scoped(service: _type[Any]_)
+The `add_scoped(service: type[Any])` function registers a scoped service based on a type. When resolved, the types constructor dependencies are injected automatically.
+
+#### Example:
 ```python
 from di import Container
 
@@ -43,11 +48,16 @@ provider = container.provider()
 service = provider.provide(Service) # => Service
 ```
 
-## add_xxx(service: _type[T]_, implementation: _Callable[..., T] | type[T] | T_)
+### add_singleton(service: _type[T]_, implementation: _Callable[..., T] | type[T] | T_)
+The `add_singleton(service: type[T], implementaion: Callable[..., T] | type[T] | T)` function registers a singleton service based on a type and an implementation of either a derived type or a function returning a derived type. When resolved, the implementations dependencies (in case of it being a function or a type) are injected automatically.
 
-The `add_xxx(service: type[T], implementaion: Callable[..., T] | type[T] | T)` function registers a service based on a type and an implementation of either a derived type or a function returning a derived type. When resolved, the implementations dependencies (in case of it being a function or a type) are injected automatically.
+### add_transient(service: _type[T]_, implementation: _Callable[..., T] | type[T] | T_)
+The `add_transient(service: type[T], implementaion: Callable[..., T] | type[T] | T)` function registers a transient service based on a type and an implementation of either a derived type or a function returning a derived type. When resolved, the implementations dependencies (in case of it being a function or a type) are injected automatically.
 
-### Example:
+### add_scoped(service: _type[T]_, implementation: _Callable[..., T] | type[T] | T_)
+The `add_scoped(service: type[T], implementaion: Callable[..., T] | type[T] | T)` function registers a scoped service based on a type and an implementation of either a derived type or a function returning a derived type. When resolved, the implementations dependencies (in case of it being a function or a type) are injected automatically.
+
+#### Example:
 ```python
 from logging import Logger
 from di import Container
@@ -61,11 +71,16 @@ provider = container.provider()
 log = provider.provide(Logger) # => Logger
 ```
 
-## add_xxx(service: _str_, implementation: _Callable[..., T] | type[T] | T_)
+### add_singleton(service: _str_, implementation: _Callable[..., T] | type[T] | T_)
+The `add_singleton(service: str, implementaion: Callable[..., T] | type[T] | T)` function registers a singleton service based on a name and an implementation of either a derived type or a function returning a derived type. When resolved, the implementations dependencies (in case of it being a function) are injected automatically. This method can be used to inject simple objects like strings and integers.
 
-The `add_xxx(service: str, implementaion: Callable[..., T] | type[T] | T)` function registers a service based on a name and an implementation of either a derived type or a function returning a derived type. When resolved, the implementations dependencies (in case of it being a function) are injected automatically. This method can be used to inject simple objects like strings and integers.
+### add_transient(service: _str_, implementation: _Callable[..., T] | type[T] | T_)
+The `add_transient(service: str, implementaion: Callable[..., T] | type[T] | T)` function registers a transient service based on a name and an implementation of either a derived type or a function returning a derived type. When resolved, the implementations dependencies (in case of it being a function) are injected automatically. This method can be used to inject simple objects like strings and integers.
 
-### Example:
+### add_scoped(service: _str_, implementation: _Callable[..., T] | type[T] | T_)
+The `add_scoped(service: str, implementaion: Callable[..., T] | type[T] | T)` function registers a scoped service based on a name and an implementation of either a derived type or a function returning a derived type. When resolved, the implementations dependencies (in case of it being a function) are injected automatically. This method can be used to inject simple objects like strings and integers.
+
+#### Example:
 ```python
 from di import Container
 
@@ -82,11 +97,16 @@ app = provider.provide(Application)
 app_name = app.name # => "App using Dependency Injection :)"
 ```
 
-## add_xxx(implementation: _Callable[..., T]_)
+### add_singleton(implementation: _Callable[..., T]_)
+The `add_singleton(implementaion: Callable[..., T] | type[T] | T)` function registers a singleton service based on the return type of the implementation. When resolved, the implementations dependencies (in case of it being a function) are injected automatically. This service can be used to inject simple objects like strings and integers.
 
-The `add_xxx(implementaion: Callable[..., T] | type[T] | T)` function registers a service based on the return type of the implementation. When resolved, the implementations dependencies (in case of it being a function) are injected automatically. This service can be used to inject simple objects like strings and integers.
+### add_transient(implementation: _Callable[..., T]_)
+The `add_transient(implementaion: Callable[..., T] | type[T] | T)` function registers a transient service based on the return type of the implementation. When resolved, the implementations dependencies (in case of it being a function) are injected automatically. This service can be used to inject simple objects like strings and integers.
 
-### Example:
+### add_scoped(implementation: _Callable[..., T]_)
+The `add_scoped(implementaion: Callable[..., T] | type[T] | T)` function registers a scoped service based on the return type of the implementation. When resolved, the implementations dependencies (in case of it being a function) are injected automatically. This service can be used to inject simple objects like strings and integers.
+
+#### Example:
 ```python
 from logging import Logger
 from di import Container
@@ -100,6 +120,6 @@ provider = container.provider()
 log = provider.provide(Logger) # => Logger
 ```
 
-## provider() -> _Provider_
+### provider() -> _Provider_
 
 The `provider()` function seals the container and returns a `Provider`. When container i sealed, no more services can be registered.

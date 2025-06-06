@@ -176,3 +176,51 @@ def test_example_7():
 
     assert isinstance(service1, Service1)
     assert isinstance(service2, Service2)
+
+
+def test_example_8():
+    from di import Container, DefaultScope, Scope, Provider
+    from random import Random
+    from threading import Thread
+
+    class RandGen:
+        rnd: Random | None
+
+        def generate(self) -> int:
+            if self.rnd:
+                return self.rnd.randint(0, 100)
+            else:
+                return -1
+
+        def __enter__(self):
+            self.rnd = Random()
+            return self
+
+        def __exit__(self):
+            del self.rnd
+
+    container = Container()
+    container.add_scoped(RandGen)
+
+    scope = DefaultScope()
+    provider = container.provider()
+
+    generators: set[int] = set()
+    ints: list[int] = []
+
+    def fn(provider: Provider, scope: Scope):
+        for i in range(3):
+            gen = provider.provide(RandGen, scope)
+            generators.add(id(gen))
+            ints.append(gen.generate())
+
+    thread1 = Thread(target = fn, args = (provider, scope))
+    thread1.start()
+    thread2 = Thread(target = fn, args = (provider, scope))
+    thread2.start()
+    thread1.join()
+    thread2.join()
+
+    assert len(generators) == 2
+    assert len(ints) == 6
+

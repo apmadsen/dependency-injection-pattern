@@ -3,8 +3,9 @@
 # `di` module
 
 ## Classes
-- [`Container`](/docs/di/container.md)
-- [`Provider`](/docs/di/provider.md)
-- [`Factory`](/docs/di/factory.md)
-- [`Scope`](/docs/di/scope.md)
-- [`DefaultScope`](/docs/di/default_scope.md)
+
+### [`Container`](/docs/di/container.md)
+### [`DefaultScope`](/docs/di/default_scope.md)
+### [`Factory`](/docs/di/factory.md)
+### [`Provider`](/docs/di/provider.md)
+### [`Scope`](/docs/di/scope.md)
