@@ -14,7 +14,7 @@ class Provider:
     """
     The Provider is connected to the Container and provides the services defined.
     """
-    __slots__ = ["__container"]
+    __slots__ = ["__container", "__weakref__"]
 
     def __init__(self, container: Container):
         self.__container = container
