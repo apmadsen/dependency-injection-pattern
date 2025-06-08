@@ -1,4 +1,8 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > [exceptions](/docs/di/exceptions/module.md) > AddException class
+[Documentation](/docs/documentation.md) >
+ [v0.0](/docs/0.0/version.md) >
+  [di](/docs/0.0/di/module.md) >
+   [exceptions](/docs/0.0/di/exceptions/module.md) >
+    AddException
 
 # `AddException` exception
 
