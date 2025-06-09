@@ -3,7 +3,7 @@
   [di](/docs/0.0/di/module.md) >
    Scope
 
-# `Scope` class
+# Scope class
 
 The `Scope` class is the base class of scopes used for providing services that are registered using the `add_scoped(...)` function.
 

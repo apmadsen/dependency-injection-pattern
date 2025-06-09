@@ -5,5 +5,5 @@
 
 ## Modules
 
-### [`di` module](di/module.md)
+### [di](di/module.md)
 

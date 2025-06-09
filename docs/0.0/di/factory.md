@@ -3,7 +3,7 @@
   [di](/docs/0.0/di/module.md) >
    Factory
 
-# `Factory` class
+# Factory class
 
 The `Factory[T]` class is used to get the Provider to provide a factory instead of a service implementation ie. a lazy implementation. This is useful if lazy provision is required, or when service was registered using the `add_scoped(...)` function, because Scoped services, using the `DefaultScope` scope cannot be provided in the main thread (that would defeat the purpose of a scoped service).
 

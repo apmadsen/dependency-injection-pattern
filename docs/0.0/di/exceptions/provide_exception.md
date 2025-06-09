@@ -4,6 +4,6 @@
    [exceptions](/docs/0.0/di/exceptions/module.md) >
     ProvideException class
 
-# `ProvideException` exception
+# ProvideException class : Exception
 
 The `ProvideException` exception is raised when provider cannot provide service.

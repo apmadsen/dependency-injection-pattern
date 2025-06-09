@@ -3,7 +3,7 @@
   [di](/docs/0.0/di/module.md) >
    exceptions
 
-# `di.exceptions` module
+# di.exceptions module
 
 ## Classes
 

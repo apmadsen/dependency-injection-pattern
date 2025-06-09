@@ -3,7 +3,7 @@
   [di](/docs/0.0/di/module.md) >
    Container
 
-# `Container` class
+# Container class
 
 The `Container` class is the class where all service registration takes place.
 
