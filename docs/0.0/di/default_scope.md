@@ -1,6 +1,9 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > DefaultScope class
+[Documentation](/docs/documentation.md) >
+ [v0.0](/docs/0.0/version.md) >
+  [di](/docs/0.0/di/module.md) >
+   DefaultScope
 
-# `DefaultScope` class
+# DefaultScope class : Scope
 
 The `DefaultScope` class is, as the name implies, the default scope used for providing services that are registered using the `add_scoped(...)` function. The class is not intended for usage outside the `di` module, which is why it's not documented in-depth.
 

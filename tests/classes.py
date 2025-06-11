@@ -79,3 +79,14 @@ class WithFactory():
 
     def get_svc(self) -> Service:
         return self.arg()
+
+class Service5:
+    ...
+
+class DependentService5:
+    def __init__(self, service: Service5):
+        self.service = service
+
+class Application:
+    def __init__(self, service: Factory[Service5]):
+        self.service_factory = service

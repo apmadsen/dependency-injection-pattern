@@ -1,6 +1,9 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > Scope class
+[Documentation](/docs/documentation.md) >
+ [v0.0](/docs/0.0/version.md) >
+  [di](/docs/0.0/di/module.md) >
+   Scope
 
-# `Scope` class
+# Scope class
 
 The `Scope` class is the base class of scopes used for providing services that are registered using the `add_scoped(...)` function.
 

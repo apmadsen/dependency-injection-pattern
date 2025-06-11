@@ -1,6 +1,9 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > Container class
+[Documentation](/docs/documentation.md) >
+ [v0.0](/docs/0.0/version.md) >
+  [di](/docs/0.0/di/module.md) >
+   Container
 
-# `Container` class
+# Container class
 
 The `Container` class is the class where all service registration takes place.
 

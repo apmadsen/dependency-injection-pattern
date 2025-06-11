@@ -3,11 +3,13 @@
 from typing import cast, Sequence
 from pytest import raises as assert_raises
 from threading import Thread
+from weakref import ref
+from gc import get_referrers, collect
 
-from di import Container, Provider
+from di import Container, Provider, Factory
 from di.exceptions import ImplementationException, AddException, SealException, ProvideException, ContainerSealedError
 
-from tests.classes import Service, Options1, DependentService, DependentServiceFail1, IService, Service2
+from tests.classes import Service, Options1, DependentService, DependentServiceFail1, IService, Service2, Service5, DependentService5, Application
 
 
 
@@ -93,3 +95,65 @@ def test_collections():
     with assert_raises(ImplementationException):
         container.add_singleton(Sequence[IService], [ Service, Service2 ])
 
+def test_lifetime():
+
+    container = Container()
+    container.add_transient(Service5)
+
+    provider = container.provider()
+    provider_id = id(provider)
+    svc = provider.provide(Service5)
+    provider = ref(provider)
+
+    collect()
+
+    assert not provider() # provider should have been collected
+
+    provider = container.provider()
+    assert id(provider) != provider_id # this provider be a new instance
+
+    provider = ref(provider)
+    container = ref(container)
+
+    collect()
+
+    # provider and container should have been collected
+    assert not provider()
+    assert not container()
+
+    ### cleanup
+    del container
+    del provider
+    del svc
+    collect()
+    ###
+
+    container = Container()
+    container.add_transient(Application)
+    container.add_transient(Service5)
+    container.add_transient(DependentService5)
+    provider = container.provider()
+
+    app = provider.provide(Application)
+    svc = app.service_factory()
+
+    container = ref(container)
+    provider = ref(provider)
+
+    collect()
+
+    # app has a live reference to Factory[Service5],
+    # so neither container or provider should be collected
+    assert container()
+    assert provider()
+
+    app = ref(app)
+
+    collect()
+
+    # app has been collected thus any references to container and provider
+    # has been removed and container and provider has therefore
+    # also been collected
+    assert not app()
+    assert not provider()
+    assert not container()

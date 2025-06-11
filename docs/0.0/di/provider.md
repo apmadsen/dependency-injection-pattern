@@ -1,6 +1,9 @@
-[Documentation](/docs/documentation.md) > [di](/docs/di/module.md) > Provider class
+[Documentation](/docs/documentation.md) >
+ [v0.0](/docs/0.0/version.md) >
+  [di](/docs/0.0/di/module.md) >
+   Provider
 
-# `Provider` class
+# Provider class
 
 The `Provider` class is created by the container when sealing it, and is the class that provides the services registered on that container.
 

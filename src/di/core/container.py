@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TypeVar, Callable, Any, cast, overload, TYPE_CHECKING
 from typingutils import is_type, isinstance_typing, get_optional_type, AnyFunction
 from types import FunctionType
+from weakref import ref
 
 from di.core.log import LOG
 from di.core.reflection import reflect_function
@@ -34,12 +35,12 @@ class Container:
         provider = container.provider() # container is sealed, and no more services can be added beyound this point
         provider.provide(Service) # => Service
     """
-    __slots__ = ["__factories", "__named_factories", "__list_factories", "__default_scope", "__provider"]
+    __slots__ = ["__factories", "__named_factories", "__list_factories", "__default_scope", "__provider", "__weakref__"]
 
     def __init__(self):
         self.__factories: dict[type[Any], Factory[Any]] = {}
         self.__named_factories: dict[str, tuple[type[Any], Factory[Any]]] = {}
-        self.__provider: Provider | None = None
+        self.__provider: ref[Provider] | None = None
         self.__default_scope = DefaultScope()
 
     @property
@@ -185,10 +186,11 @@ class Container:
         Returns:
             Provider -- The Provider instance
         """
+        from di.core.provider import Provider
         if self.__provider is None:
-            from di.core.provider import Provider
-            self.__provider = Provider(self)
-            self.__add_factory(SingletonFactory, Provider, self.__provider)
+            provider = Provider(self)
+            self.__provider = ref(provider)
+            self.__add_factory(SingletonFactory, Provider, self.provider)
 
             factories = { **self.__factories, **{ service: factory for service, factory in self.__named_factories.values() } }
             for service, factory in factories.items():
@@ -204,7 +206,13 @@ class Container:
                         elif isinstance(factories[dep.service], TransientFactory):
                             raise SealException(f"Singleton service '{get_service_name(service)}' depends on transient service {get_service_name(dep.service)}' which is not permitted.")
 
-        return self.__provider
+            return provider
+        elif provider :=self.__provider():
+            return provider
+        else:
+            provider = Provider(self)
+            self.__provider = ref(provider)
+            return provider
 
     def __add_factory_pre(self, factory_type: type[Factory[T]], *args: Any) -> tuple[str, type[Any]]:
         if self.__provider != None:

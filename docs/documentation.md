@@ -1,7 +1,6 @@
 [Documentation](/docs/documentation.md)
 
-# Documentation
+# Dependency Injection Pattern documentation
 
-### [`di` module](/docs/di/module.md)
-### [`di.exceptions` module](/docs/di/exceptions/module.md)
+### [Version 0.0](0.0/version.md)
 
