@@ -27,7 +27,8 @@ classifiers = [
     "Typing :: Typed"
 ]
 dependencies = [
-    "typing-utilities >= 0.0.3, < 0.1"
+    "typing-utilities >= 0.0.3, < 0.1",
+    "runtime-reflection-lite >= 0.0.0, < 0.1"
 ]
 requires-python = ">=3.10"
 

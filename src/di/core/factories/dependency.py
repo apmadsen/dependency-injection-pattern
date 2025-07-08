@@ -1,8 +1,8 @@
 from typing import Any, cast
 from typingutils import get_optional_type
+from runtime.reflection.lite import Undefined
 
 from di.core.helpers import get_provided_service_from_annotation
-from di.core.reflection.undefined import Undefined
 
 class Dependency:
     __slots__ = [ "__name", "__service", "__factory", "__optional", "__default" ]

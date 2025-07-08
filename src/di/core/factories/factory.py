@@ -1,7 +1,7 @@
 from typing import TypeVar, Callable, Generic, Any, cast
 from typingutils import get_optional_type, issubclass_typing, isinstance_typing
+from runtime.reflection.lite import Undefined, ParameterKind, reflect_function, get_constructor
 
-from di.core.reflection import Undefined, ParameterKind, reflect_function, get_constructor
 from di.core.scope import Scope
 from di.core.named_service import NamedService
 from di.core.service_request import ServiceRequest

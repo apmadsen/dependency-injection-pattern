@@ -3,9 +3,9 @@ from typing import TypeVar, Callable, Any, cast, overload, TYPE_CHECKING
 from typingutils import is_type, isinstance_typing, get_optional_type, AnyFunction
 from types import FunctionType
 from weakref import ref
+from runtime.reflection.lite import reflect_function
 
 from di.core.log import LOG
-from di.core.reflection import reflect_function
 from di.core.scope import Scope
 from di.core.service_request import ServiceRequest
 from di.core.factories.singleton_factory import SingletonFactory
