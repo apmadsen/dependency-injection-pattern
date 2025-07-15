@@ -1,6 +1,6 @@
 from typing import TypeVar, Callable, Generic, Any, cast
 from typingutils import get_optional_type, issubclass_typing, isinstance_typing
-from runtime.reflection.lite import Undefined, ParameterKind, reflect_function, get_constructor
+from runtime.reflection.lite import Undefined, ParameterKind, get_signature, get_constructor
 
 from di.core.scope import Scope
 from di.core.named_service import NamedService
@@ -25,7 +25,7 @@ class Factory(Generic[T]):
 
         if not implementation:
             if hasattr(service, "__origin__"):
-                sig = reflect_function(getattr(service, "__call__"), service)
+                sig = get_signature(getattr(service, "__call__"), service)
             else:
                 sig = get_constructor(service)
         elif isinstance(implementation, type):
@@ -37,7 +37,7 @@ class Factory(Generic[T]):
         elif isinstance_typing(implementation, service, recursive=True):
             sig = None
         elif callable(implementation):
-            sig = reflect_function(implementation)
+            sig = get_signature(implementation)
             if sig.return_type:
                 implementation_type, _ = get_optional_type(sig.return_type)
             else:

@@ -3,7 +3,7 @@
   [di](/docs/0.0/di/module.md) >
    Provider
 
-# Provider class
+# Provider
 
 The `Provider` class is created by the container when sealing it, and is the class that provides the services registered on that container.
 
@@ -38,11 +38,15 @@ service1, service2 = app.services # => Service1, Service2
 
 ### provides(service: _str | type[Any]_) -> _bool_
 
-The `provides(service: str | type[Any])` function returns a boolean value indicating if a service of specified type of name can be provided or not.
+Returns a boolean value indicating if a service of specified type of name can be provided or not.
+
+- service `str | type[Any]`: The service name or type.
 
 ### provide(self, service: _type[T]_) -> _T_
 
-The `provide(self, service: type[T]) -> T` function returns the service with specified type.
+Returns the service with specified type.
+
+- service `type[T]`: The service name or type.
 
 #### Example:
 ```python
@@ -58,11 +62,15 @@ provider = container.provider()
 log = provider.provide(Logger) # => Logger
 ```
 
-### provide(self, service: _type[T]_, scope: _Scope_) -> _T_
+### provide(self, service: _type[T]_, scope: _[Scope](scope.md_)) -> _T_
 
-The `provide(self, service: type[T], scope: Scope) -> T` function returns the service with specified type. If a scope is specified, that scope handles the lifetime of the service - otherwise the default scope eg. `Container.default_scope` is used.
+Returns the service with specified type. If a scope is specified, that scope handles the lifetime of the service - otherwise the default scope eg. `Container.default_scope` is used.
 
 Note that only scoped services registered using the `add_scoped(...)` function uses the scope to handle lifetime.
+
+
+- service `type[Any]`: The service name or type.
+- scope `Scope`: The scope.
 
 
 ### Example:

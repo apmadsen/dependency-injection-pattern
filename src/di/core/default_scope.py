@@ -9,7 +9,6 @@ from di.core.helpers import is_context, get_service_name
 
 T = TypeVar('T')
 
-
 class DefaultScope(Scope):
     """
     DefaultScope is as the name implies the default scope. This scope is thread-based, meaning it will supply
