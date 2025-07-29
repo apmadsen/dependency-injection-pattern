@@ -19,6 +19,8 @@
             "module": "pytest",
             "console": "integratedTerminal",
             "args": [
+                "-vv",
+                "-s",
                 "--cov-branch",
                 "--cov-report",
                 "term-missing",

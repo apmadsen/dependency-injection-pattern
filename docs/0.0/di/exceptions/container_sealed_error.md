@@ -4,6 +4,6 @@
    [exceptions](/docs/0.0/di/exceptions/module.md) >
     ContainerSealedError
 
-# ContainerSealedError class : Exception
+# ContainerSealedError : Exception
 
 The `ContainerSealedError` exception is raised when container has been sealed, and additional services are being added afterwards.

@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import TypeVar, Callable, Any, cast, overload, TYPE_CHECKING
-from typingutils import is_type, isinstance_typing, get_optional_type, AnyFunction
+from typingutils import is_type, isinstance_typing, get_optional_type
 from types import FunctionType
 from weakref import ref
-from runtime.reflection.lite import reflect_function
+from runtime.reflection.lite import get_signature
 
 from di.core.log import LOG
 from di.core.scope import Scope
@@ -48,19 +48,19 @@ class Container:
         return self.__default_scope
 
     @overload
-    def add_singleton(self, service: type, /) -> None:
+    def add_singleton(self, service: type[Any], /) -> None:
         """Adds a singleton service to provider, which will result in same instance every time it's provided.
 
         Args:
-            service (type): The service interface
+            service (type[Any]): The service interface
         """
         ...
     @overload
-    def add_singleton(self, implementation: AnyFunction, /) -> None:
+    def add_singleton(self, implementation: Callable[..., T], /) -> None:
         """Adds a singleton service to provider, which will result in same instance every time it's provided.
 
         Args:
-            implementation (AnyFunction) The service implementation
+            implementation (Callable[..., T]) The service implementation
         """
         ...
     @overload
@@ -87,20 +87,20 @@ class Container:
         self.__add_factory_pre(SingletonFactory, *args)
 
     @overload
-    def add_transient(self, service: type, /) -> None:
+    def add_transient(self, service: type[Any], /) -> None:
         """Adds a transient service to provider, which will result in a new instance every time it's provided.
 
         Args:
-            service (type) The service interface
+            service (type[Any]) The service interface
 
         """
         ...
     @overload
-    def add_transient(self, implementation: AnyFunction, /) -> None:
+    def add_transient(self, implementation: Callable[..., T], /) -> None:
         """Adds a transient service to provider, which will result in a new instance every time it's provided.
 
         Args:
-            implementation (AnyFunction) The service implementation
+            implementation (Callable[..., T]) The service implementation
         """
         ...
     @overload
@@ -127,25 +127,25 @@ class Container:
         self.__add_factory_pre(TransientFactory, *args)
 
     @overload
-    def add_scoped(self, service: type, /) -> None:
+    def add_scoped(self, service: type[Any], /) -> None:
         """Adds a scoped service to provider, which will result in one instance every time it's provided in the same scope.
         The default scope is thread-based, and bound to the lifetime of the thread in which a given service is provided.
 
         Note: Scoped services should implement the ContextManager pattern.
 
         Args:
-            service (type) The service interface
+            service (type[Any]) The service interface
         """
         ...
     @overload
-    def add_scoped(self, implementation: AnyFunction, /) -> None:
+    def add_scoped(self, implementation: Callable[..., T], /) -> None:
         """Adds a scoped service to provider, which will result in one instance every time it's provided in the same scope.
         The default scope is thread-based, and bound to the lifetime of the thread in which a given service is provided.
 
         Note: Scoped services should implement the ContextManager pattern.
 
         Args:
-            implementation (AnyFunction) The service implementation
+            implementation (Callable[..., T]) The service implementation
         """
         ...
     @overload
@@ -231,7 +231,7 @@ class Container:
             if not isinstance(args[0], FunctionType):
                 raise AddException("Implementation must be a function or a type when no service is specified.")
             implementation = cast(Callable[..., Any], args[0])
-            signature = reflect_function(implementation)
+            signature = get_signature(implementation)
             service, _ = get_optional_type(cast(type, signature.return_type))
 
         return get_service_name(service), self.__add_factory(factory_type, cast(str | type[Any], service), implementation)
@@ -248,7 +248,7 @@ class Container:
             if is_type(implementation):
                 svc_type = cast(type[T], implementation)
             elif callable(implementation):
-                signature = reflect_function(implementation)
+                signature = get_signature(implementation)
                 svc_type = cast(type[T], signature.return_type)
             else:
                 svc_type = cast(type[T], type(implementation))

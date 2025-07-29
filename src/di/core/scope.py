@@ -11,5 +11,14 @@ class Scope(ABC):
     """
 
     @abstractmethod
-    def provide(self, service: type[T], factory: Callable[..., T]) -> T:
+    def provide(self, service: type[T], factory: Callable[[], T]) -> T:
+        """This function function is used by the `ScopedFactory` factory to provide and cleanup services.
+
+        Args:
+            service (type[T]): The service type.
+            factory (Callable[[], T]): The factory function.
+
+        Returns:
+            T: Returns an object.
+        """
         ...
