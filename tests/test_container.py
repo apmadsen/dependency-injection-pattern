@@ -1,5 +1,5 @@
 # pyright: basic
-# from __future__ import annotations
+# ruff: noqa
 from typing import cast, Sequence
 from pytest import raises as assert_raises
 from threading import Thread
