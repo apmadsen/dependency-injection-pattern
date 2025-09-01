@@ -1,5 +1,4 @@
 from typing import MutableMapping, Protocol, TypeVar, cast, runtime_checkable
-from di.core.factory import Factory
 from types import TracebackType
 from typingutils import AnyType, issubclass_typing, get_type_name
 
@@ -35,7 +34,7 @@ def get_provided_service_from_annotation(annotation: AnyType) -> tuple[AnyType, 
 __CONTEXT_SERVICES__: MutableMapping[type, bool] = {}
 
 def is_context(cls: type) -> bool:
-    if not cls in __CONTEXT_SERVICES__:
+    if cls not in __CONTEXT_SERVICES__:
         # reflection = reflect_class(cls)
 
         # if "__enter__" in reflection.functions and "__exit__" in reflection.functions:

@@ -30,7 +30,7 @@ class Factory(Generic[T]):
                 sig = get_constructor(service)
         elif isinstance(implementation, type):
             sig = get_constructor(cast(type, implementation))
-            if not service is NamedService and not issubclass_typing(implementation, service):
+            if service is not NamedService and not issubclass_typing(implementation, service):
                 raise ImplementationException(service, implementation, "Implementation class is not derived from service")
             elif implementation is service:
                 raise ImplementationException(service, implementation, "Implementation equals service")
@@ -54,7 +54,7 @@ class Factory(Generic[T]):
         else:
             raise ImplementationException(service, implementation, "Implementation does not resolve into a class derived from service")
 
-        if sig != None:
+        if sig is not None:
             parameters = [ p for p in sig.parameters if p.kind == ParameterKind.POSITIONAL_OR_KEYWORD ]
             missing_annotations = [ p.name for p in parameters if not p.parameter_type ]
             self.__dependencies = { p.name: Dependency(p.name, p.parameter_type, p.default) for p in parameters }
