@@ -68,7 +68,7 @@ class Provider:
         else:
             result = self.__container._get(cast(type[T], service)) # pyright: ignore[reportPrivateUsage]
 
-            if result == None:
+            if result is None:
                 # optional requirements may return None
                 if is_optional:
                     return None # pyright: ignore[reportReturnType]

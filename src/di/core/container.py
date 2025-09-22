@@ -195,7 +195,7 @@ class Container:
             factories = { **self.__factories, **{ service: factory for service, factory in self.__named_factories.values() } }
             for service, factory in factories.items():
                 for dep in factory.dependencies.values():
-                    if not dep.service in factories:
+                    if dep.service not in factories:
                         if not dep.is_optional and not dep.has_default:
                             raise SealException(f"Service '{get_service_name(service)}' depends on service '{get_service_name(dep.service)}' which is not defined in container.")
                         else:
@@ -207,7 +207,7 @@ class Container:
                             raise SealException(f"Singleton service '{get_service_name(service)}' depends on transient service {get_service_name(dep.service)}' which is not permitted.")
 
             return provider
-        elif provider :=self.__provider():
+        elif provider := self.__provider():
             return provider
         else:
             provider = Provider(self)
@@ -215,7 +215,7 @@ class Container:
             return provider
 
     def __add_factory_pre(self, factory_type: type[Factory[T]], *args: Any) -> tuple[str, type[Any]]:
-        if self.__provider != None:
+        if self.__provider is not None:
             raise ContainerSealedError
 
         if len(args) == 2:
@@ -335,7 +335,7 @@ class Container:
 
         if factory:
             return factory
-        elif default != None:
+        elif default is not None:
             return default
         elif not is_optional:
             if isinstance(service, ServiceRequest):

@@ -1,4 +1,5 @@
 # pyright: basic
+# ruff: noqa
 from typing import cast, Sequence, MutableSequence, Generic, TypeVar, Any, ClassVar
 from pytest import raises as assert_raises
 

@@ -55,7 +55,7 @@ class DefaultScope(Scope):
                 self.__local.finalizer = Thread(target = finalize, args = [ current_thread(), dict ])
                 self.__local.finalizer.start()
 
-        if not service in self.__local.dict:
+        if service not in self.__local.dict:
             impl = factory()
             if current_thread() != main_thread() and is_context(service):
                 # finalizer is only implemented when thread is not main thread, otherwise object would never be exited (eg. finalized)

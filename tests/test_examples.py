@@ -1,4 +1,5 @@
 # pyright: basic
+# ruff: noqa
 
 def test_example_1():
     from logging import Logger
