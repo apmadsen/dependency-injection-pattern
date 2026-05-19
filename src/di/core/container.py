@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TypeVar, Callable, Any, cast, overload, TYPE_CHECKING
-from typingutils import is_type, isinstance_typing, get_optional_type
+from typingutils import is_type, isinstance_typing, issubclass_typing, get_optional_type
 from types import FunctionType
 from weakref import ref
 from runtime.reflection.lite import get_signature
@@ -282,7 +282,13 @@ class Container:
         elif isinstance(service, type) and issubclass(service, Provider): # pyright: ignore[reportUnnecessaryIsInstance]
             return True
         elif is_type(service):
-            return service in self.__factories
+            if service in self.__factories:
+                return True
+            else:
+                # check for factories of derived types
+                for provided_service, _ in self.__factories.items():
+                    if issubclass_typing(provided_service, cast(type[Any], service)):
+                        return True
 
         return False
 
@@ -316,6 +322,15 @@ class Container:
                 if svc in self.__factories:
                     factory = self.__factories[cast(type, svc)]
                     break
+
+        # check for factories of derived types
+        for svc in [svc_type, service]: # pyright: ignore[reportUnknownVariableType]
+            if is_type(svc):
+                for provided_service, provided_factory in self.__factories.items():
+                    if issubclass_typing(provided_service, cast(type[Any], svc)):
+                        factory = provided_factory
+                        break
+
 
         return factory, default, is_optional
 

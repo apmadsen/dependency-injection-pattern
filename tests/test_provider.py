@@ -134,3 +134,23 @@ def test_generic_service():
     provider.provide(GenericClass[str])
     provider.provide(GenericClass[int])
 
+
+
+def test_derived_service():
+    container = Container()
+    container.add_singleton(Service)
+    provider = container.provider()
+
+    # the container only has a factory for the Service class which
+    # is derived from the IService class, but subclass matching
+    # makes sure that both types can be provided
+
+    assert provider.provides(IService)
+    svc = provider.provide(IService)
+    assert isinstance(svc, IService)
+    assert isinstance(svc, Service)
+
+    assert provider.provides(Service)
+    svc = provider.provide(Service)
+    assert isinstance(svc, IService)
+    assert isinstance(svc, Service)
