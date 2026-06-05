@@ -42,7 +42,7 @@ class DefaultScope(Scope):
                     try:
                         if is_context(service):
                             LOG.debug(f"Disposing service '{get_service_name(service)}' on thread '{current_thread().name}'")
-                            getattr(implementation, "__exit__")()
+                            getattr(implementation, "__exit__")(None, None, None)
 
                     except Exception as ex: # pragma: no cover
                         # swallow exception, as it's caught in the finalizer thread
