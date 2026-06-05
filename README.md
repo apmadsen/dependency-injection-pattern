@@ -62,7 +62,6 @@ The goal is not to reduce lines of code — but to make systems easier to evolve
 ### 4. Minimal abstraction
 The framework avoids unnecessary complexity and stays close to Python’s core concepts.
 
----
 
 ## 🔗 What this enables
 
@@ -107,7 +106,6 @@ Use this library if you:
 - Need better testability
 - Prefer structured architecture over ad-hoc patterns
 
----
 
 ## 🚫 When not to use
 
