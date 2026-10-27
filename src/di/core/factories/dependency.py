@@ -1,11 +1,13 @@
 from typing import Any, cast
-from typingutils import get_optional_type
+
 from runtime.reflection.lite import Undefined
+from typingutils import get_optional_type
 
 from di.core.helpers import get_provided_service_from_annotation
 
+
 class Dependency:
-    __slots__ = [ "__name", "__service", "__factory", "__optional", "__default" ]
+    __slots__ = ["__default", "__factory", "__name", "__optional", "__service"]
 
     def __init__(self, name: str, service: type[Any], default: Any ):
         self.__name = name

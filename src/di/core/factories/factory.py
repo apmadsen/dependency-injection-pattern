@@ -1,21 +1,27 @@
-from typing import TypeVar, Callable, Generic, Any, cast
-from typingutils import get_optional_type, issubclass_typing, isinstance_typing
-from runtime.reflection.lite import Undefined, ParameterKind, get_signature, get_constructor
+from collections.abc import Callable
+from typing import Any, Generic, TypeVar, cast
 
-from di.core.scope import Scope
-from di.core.named_service import NamedService
-from di.core.service_request import ServiceRequest
+from runtime.reflection.lite import (
+    ParameterKind,
+    Undefined,
+    get_constructor,
+    get_signature,
+)
+from typingutils import get_optional_type, isinstance_typing, issubclass_typing
 
-from di.core.exceptions.implementation_exception import ImplementationException
 from di.core.exceptions.factory_provide_exception import FactoryProvideException
+from di.core.exceptions.implementation_exception import ImplementationException
 from di.core.exceptions.provide_exception import ProvideException
-from di.core.protocols.container import Container
 from di.core.factories.dependency import Dependency
+from di.core.named_service import NamedService
+from di.core.protocols.container import Container
+from di.core.scope import Scope
+from di.core.service_request import ServiceRequest
 
 T = TypeVar('T')
 
 class Factory(Generic[T]):
-    __slots__ = ["__container", "__service", "__implementation", "__ctor", "__dependencies"]
+    __slots__ = ["__container", "__ctor", "__dependencies", "__implementation", "__service"]
 
     def __init__(self, container: Container, service: type[T], implementation: type[T] | Callable[..., T] | T | None = None):
         self.__container = container
@@ -25,7 +31,7 @@ class Factory(Generic[T]):
 
         if not implementation:
             if hasattr(service, "__origin__"):
-                sig = get_signature(getattr(service, "__call__"), service)
+                sig = get_signature(service.__call__, service)
             else:
                 sig = get_constructor(service)
         elif isinstance(implementation, type):

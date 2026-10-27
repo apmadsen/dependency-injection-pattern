@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -6,7 +6,7 @@ class ServiceRequest(Generic[T]):
     """
     The ServiceRequest[T] class is used internally to request a service by name.
     """
-    __slots__ = ["__name", "__type", "__default"]
+    __slots__ = ["__default", "__name", "__type"]
 
     def __init__(self, name: str, type: type[T], default: T):
         self.__name = name.lower()

@@ -3,6 +3,7 @@ from typing import overload
 
 from di.core.helpers import get_service_name
 
+
 class ProvideException(Exception):
     """
     The ProvideException is raised when provider cannot provide service.

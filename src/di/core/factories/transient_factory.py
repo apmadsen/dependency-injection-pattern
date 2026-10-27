@@ -1,8 +1,9 @@
-from typing import TypeVar, Callable
+from collections.abc import Callable
+from typing import TypeVar
 
-from di.core.scope import Scope
 from di.core.factories.factory import Factory
 from di.core.protocols.container import Container
+from di.core.scope import Scope
 
 T = TypeVar('T')
 

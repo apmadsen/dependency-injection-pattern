@@ -1,5 +1,6 @@
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
+from di.core.exceptions.internal_exception import InternalException
 from di.core.scope import Scope
 
 T = TypeVar("T")
@@ -15,7 +16,7 @@ class Factory(Generic[T]):
     """
 
     def __new__(cls):
-        raise Exception("The Factory class is not intended for instantation") # pragma: no cover
+        raise InternalException("The Factory class is not intended for instantation") # pragma: no cover
 
     def provide(self, scope: Scope | None = None) -> T: # pragma: no cover
         raise NotImplementedError

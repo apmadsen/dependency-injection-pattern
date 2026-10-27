@@ -1,4 +1,4 @@
-from typing import Protocol, Any, TypeVar, overload, runtime_checkable
+from typing import Any, Protocol, TypeVar, overload, runtime_checkable
 
 from di.core.scope import Scope
 from di.core.service_request import ServiceRequest

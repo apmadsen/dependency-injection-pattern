@@ -1,12 +1,14 @@
-from typing import TypeVar, Callable, cast
+from collections.abc import Callable
+from typing import TypeVar, cast
+
 from typingutils import is_type, isinstance_typing
 
-from di.core.log import LOG
-from di.core.helpers import get_service_name
-from di.core.scope import Scope
-from di.core.named_service import NamedService
 from di.core.factories.factory import Factory
+from di.core.helpers import get_service_name
+from di.core.log import LOG
+from di.core.named_service import NamedService
 from di.core.protocols.container import Container
+from di.core.scope import Scope
 
 T = TypeVar('T')
 

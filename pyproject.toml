@@ -18,11 +18,11 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Libraries",
@@ -32,15 +32,15 @@ dependencies = [
     "typing-utilities >= 0.1.0, < 0.2",
     "runtime-reflection-lite >= 0.2.0, < 0.3"
 ]
-requires-python = ">= 3.10, < 3.15"
+requires-python = ">= 3.11, < 3.16"
 
 [project.urls]
 repository = "https://github.com/apmadsen/dependency-injection-pattern"
 
 [project.optional-dependencies]
 test = [
-    "pytest>=8.3",
-    "pytest-cov>=6.1",
+    "pytest>=9.0",
+    "pytest-cov>=7.0",
 ]
 
 [tool.setuptools-git-versioning]

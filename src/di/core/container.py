@@ -1,27 +1,30 @@
 from __future__ import annotations
-from typing import TypeVar, Callable, Any, cast, overload, TYPE_CHECKING
-from typingutils import is_type, isinstance_typing, issubclass_typing, get_optional_type
-from types import FunctionType
-from weakref import ref
-from runtime.reflection.lite import get_signature
 
-from di.core.log import LOG
-from di.core.scope import Scope
-from di.core.service_request import ServiceRequest
+from collections.abc import Callable
+from types import FunctionType
+from typing import TYPE_CHECKING, Any, TypeVar, cast, overload
+from weakref import ref
+
+from runtime.reflection.lite import get_signature
+from typingutils import get_optional_type, is_type, isinstance_typing, issubclass_typing
+
+from di.core.default_scope import DefaultScope
+from di.core.exceptions.add_exception import AddException
+from di.core.exceptions.container_sealed_error import ContainerSealedError
+from di.core.exceptions.provide_exception import ProvideException
+from di.core.exceptions.seal_exception import SealException
+from di.core.factories.scoped_factory import ScopedFactory
 from di.core.factories.singleton_factory import SingletonFactory
 from di.core.factories.transient_factory import TransientFactory
-from di.core.factories.scoped_factory import ScopedFactory
-from di.core.default_scope import DefaultScope
-from di.core.named_service import NamedService
 from di.core.helpers import clean_service_name, get_service_name, is_context
-from di.core.exceptions.provide_exception import ProvideException
-from di.core.exceptions.add_exception import AddException
-from di.core.exceptions.seal_exception import SealException
-from di.core.exceptions.container_sealed_error import ContainerSealedError
+from di.core.log import LOG
+from di.core.named_service import NamedService
+from di.core.scope import Scope
+from di.core.service_request import ServiceRequest
 
 if TYPE_CHECKING:
-    from di.core.provider import Provider
     from di.core.factories.factory import Factory
+    from di.core.provider import Provider
 
 T = TypeVar('T')
 
@@ -35,7 +38,7 @@ class Container:
         provider = container.provider() # container is sealed, and no more services can be added beyound this point
         provider.provide(Service) # => Service
     """
-    __slots__ = ["__factories", "__named_factories", "__list_factories", "__default_scope", "__provider", "__weakref__"]
+    __slots__ = ["__default_scope", "__factories", "__list_factories", "__named_factories", "__provider", "__weakref__"]
 
     def __init__(self):
         self.__factories: dict[type[Any], Factory[Any]] = {}
@@ -54,7 +57,6 @@ class Container:
         Args:
             service (type[Any]): The service interface
         """
-        ...
     @overload
     def add_singleton(self, implementation: Callable[..., T], /) -> None:
         """Adds a singleton service to provider, which will result in same instance every time it's provided.
@@ -62,7 +64,6 @@ class Container:
         Args:
             implementation (Callable[..., T]) The service implementation
         """
-        ...
     @overload
     def add_singleton(self, service: type[T], implementation: type[T] | Callable[..., T] | T, /) -> None:
         """Adds a singleton service to provider, which will result in same instance every time it's provided.
@@ -72,7 +73,6 @@ class Container:
             service (type[T]) The service interface
             implementation (type[T] | Callable[..., T] | T) The service implementation
         """
-        ...
     @overload
     def add_singleton(self, service: str, implementation: type[T] | Callable[..., T] | T, /) -> None:
         """Adds a singleton service to provider, which will result in same instance every time it's provided.
@@ -82,7 +82,6 @@ class Container:
             service (str) The service name
             implementation (type[T] | Callable[..., T] | T) The service implementation
         """
-        ...
     def add_singleton(self, *args: Any) -> None:
         self.__add_factory_pre(SingletonFactory, *args)
 
@@ -94,7 +93,6 @@ class Container:
             service (type[Any]) The service interface
 
         """
-        ...
     @overload
     def add_transient(self, implementation: Callable[..., T], /) -> None:
         """Adds a transient service to provider, which will result in a new instance every time it's provided.
@@ -102,7 +100,6 @@ class Container:
         Args:
             implementation (Callable[..., T]) The service implementation
         """
-        ...
     @overload
     def add_transient(self, service: type[T], implementation: type[T] | Callable[..., T], /) -> None:
         """Adds a transient service to provider, which will result in a new instance every time it's provided.
@@ -112,7 +109,6 @@ class Container:
             service (str | type[T]) The service interface
             implementation (type[T] | Callable[..., T]) The service implementation
         """
-        ...
     @overload
     def add_transient(self, service: str, implementation: type[T] | Callable[..., T] | T, /) -> None:
         """Adds a transient service to provider, which will result in a new instance every time it's provided.
@@ -122,7 +118,6 @@ class Container:
             service (str) The service name
             implementation (type[T] | Callable[..., T] | T) The service implementation
         """
-        ...
     def add_transient(self, *args: Any) -> None:
         self.__add_factory_pre(TransientFactory, *args)
 
@@ -136,7 +131,6 @@ class Container:
         Args:
             service (type[Any]) The service interface
         """
-        ...
     @overload
     def add_scoped(self, implementation: Callable[..., T], /) -> None:
         """Adds a scoped service to provider, which will result in one instance every time it's provided in the same scope.
@@ -147,7 +141,6 @@ class Container:
         Args:
             implementation (Callable[..., T]) The service implementation
         """
-        ...
     @overload
     def add_scoped(self, service: type[T], implementation: type[T] | Callable[..., T], /) -> None:
         """Adds a scoped service to provider, which will result in one instance every time it's provided in the same scope.
@@ -160,7 +153,6 @@ class Container:
             service (str | type[T]) The service interface
             implementation (type[T] | Callable[..., T]) The service implementation
         """
-        ...
     @overload
     def add_scoped(self, service: str, implementation: type[T] | Callable[..., T] | T, /) -> None:
         """Adds a scoped service to provider, which will result in one instance every time it's provided in the same scope.
@@ -173,7 +165,6 @@ class Container:
             service (str) The service name
             implementation (type[T] | Callable[..., T] | T) The service implementation
         """
-        ...
     def add_scoped(self, *args: Any) -> None:
         service, svc_type = self.__add_factory_pre(ScopedFactory, *args)
 
@@ -286,7 +277,7 @@ class Container:
                 return True
             else:
                 # check for factories of derived types
-                for provided_service, _ in self.__factories.items():
+                for provided_service in self.__factories:
                     if issubclass_typing(provided_service, cast(type[Any], service)):
                         return True
 
@@ -318,10 +309,9 @@ class Container:
                     if svc_def[0] is svc_type:
                         factory = svc_def[1]
                         break
-            elif is_type(svc):
-                if svc in self.__factories:
-                    factory = self.__factories[cast(type, svc)]
-                    break
+            elif is_type(svc) and svc in self.__factories:
+                factory = self.__factories[cast(type, svc)]
+                break
 
         # check for factories of derived types
         for svc in [svc_type, service]: # pyright: ignore[reportUnknownVariableType]

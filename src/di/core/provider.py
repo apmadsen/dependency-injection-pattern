@@ -1,12 +1,13 @@
-from typing import TypeVar, Any, cast, overload
-from typingutils import issubclass_typing, get_optional_type
+from typing import Any, TypeVar, cast, overload
+
+from typingutils import get_optional_type, issubclass_typing
 
 from di.core.exceptions.factory_provide_exception import FactoryProvideException
-from di.core.scope import Scope
-from di.core.factory import Factory as PublicFactory
 from di.core.factories.factory import Factory
-from di.core.service_request import ServiceRequest
+from di.core.factory import Factory as PublicFactory
 from di.core.protocols.container import Container
+from di.core.scope import Scope
+from di.core.service_request import ServiceRequest
 
 T = TypeVar('T')
 
@@ -41,7 +42,6 @@ class Provider:
             service (type[Any]) The service interface.
 
         """
-        ...
     @overload
     def provide(self, service: type[T], scope: Scope) -> T:
         """
@@ -51,7 +51,6 @@ class Provider:
             service (type[Any]) The service interface.
             scope (Scope) A custom scope.
         """
-        ...
     def provide(self, service: type[T], scope: Scope | None = None) -> T:
         return self._provide(service, scope)
 
@@ -63,7 +62,7 @@ class Provider:
 
         if svc_type and issubclass_typing(svc_type, PublicFactory):
             def factory() -> T:
-                return self._provide(cast(type[T], getattr(svc_type, "__args__")[0]))
+                return self._provide(cast(type[T], svc_type.__args__[0])) # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
             return factory # pyright: ignore[reportReturnType]
         else:
             result = self.__container._get(cast(type[T], service)) # pyright: ignore[reportPrivateUsage]

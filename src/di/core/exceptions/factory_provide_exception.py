@@ -1,8 +1,11 @@
 # pragma: no cover
-from typing import Mapping, overload
+from collections.abc import Mapping
+from typing import overload
+
 from typingutils import AnyType
 
 from di.core.helpers import get_service_name
+
 
 class FactoryProvideException(Exception):
     """

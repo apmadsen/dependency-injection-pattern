@@ -3,6 +3,7 @@ from typing import Any
 
 from di.core.helpers import get_service_name
 
+
 class ImplementationException(Exception):
     """
     The ImplementationException is raised at initialization time when factory cannot provide service using the

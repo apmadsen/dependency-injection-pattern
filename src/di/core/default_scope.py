@@ -1,11 +1,13 @@
 from __future__ import annotations
-from typing import TypeVar, Callable, MutableMapping, cast
-from threading import Thread, local, current_thread, main_thread
 
+from collections.abc import Callable, MutableMapping
+from threading import Thread, current_thread, local, main_thread
+from typing import TypeVar, cast
+
+from di.core.exceptions.provide_exception import ProvideException
+from di.core.helpers import get_service_name, is_context
 from di.core.log import LOG
 from di.core.scope import Scope
-from di.core.exceptions.provide_exception import ProvideException
-from di.core.helpers import is_context, get_service_name
 
 T = TypeVar('T')
 
@@ -38,15 +40,15 @@ class DefaultScope(Scope):
             def finalize(thread: Thread, dict: MutableMapping[type[T], T]) -> None:
                 thread.join() # wait until thread is finished
                 LOG.debug(f"Finalizing scope for thread '{current_thread().name}'")
-                for service, implementation in dict.items():
+                for svc, implementation in dict.items():
                     try:
-                        if is_context(service):
-                            LOG.debug(f"Disposing service '{get_service_name(service)}' on thread '{current_thread().name}'")
-                            getattr(implementation, "__exit__")(None, None, None)
+                        if is_context(svc):
+                            LOG.debug(f"Disposing service '{get_service_name(svc)}' on thread '{current_thread().name}'")
+                            implementation.__exit__(None, None, None) # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
 
-                    except Exception as ex: # pragma: no cover
+                    except Exception as ex: # pragma: no cover  # noqa: BLE001
                         # swallow exception, as it's caught in the finalizer thread
-                        LOG.error(f"Disposing of service '{get_service_name(service)}' failed: {ex}")
+                        LOG.error(f"Disposing of service '{get_service_name(svc)}' failed: {ex}")
 
 
                 dict.clear()
@@ -60,7 +62,7 @@ class DefaultScope(Scope):
             if current_thread() != main_thread() and is_context(service):
                 # finalizer is only implemented when thread is not main thread, otherwise object would never be exited (eg. finalized)
                 LOG.debug(f"Initializing service '{get_service_name(service)}' on thread '{current_thread().name}'")
-                impl = cast(T, getattr(impl, "__enter__")())
+                impl = cast(T, impl.__enter__()) # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
                 if not isinstance(impl, service): # pragma: no cover
                     raise ProvideException(service, f"Service '{get_service_name(service)}' implementation's __enter__() method returned an object of different type than service")
 
